@@ -50,9 +50,28 @@ public class MemoService {
     }
 
     /**
+     * 메모 수정
+     */
+    public boolean update(MemoDto memoDto) {
+
+        // 메모 가져오기
+        MemoEntity memoEntity = memoRepository.findById(memoDto.getId()).orElseThrow(() -> new RuntimeException("존재하지 않는 메모"));
+
+        // 소유권자인지 확인
+        Long memberId = (Long) SessionManager.getSessionAttribute("memberId");
+        if (!memoEntity.getMemberEntity().getId().equals(memberId)) throw new RuntimeException("수정 권한 없음");
+
+        // 메모 수정
+        memoEntity.setTitle(memoDto.getTitle());
+        memoEntity.setContent(memoDto.getContent());
+
+        return true;
+    }
+
+    /**
      * 메모 가져오기, 페이지네이션
      */
-    public MemoPageDto getMemoItems(Pageable pageable) {
+    public MemoPageDto getMemoPage(Pageable pageable) {
 
         // 세션에서 멤버 아이디 추출
         Long memberId = (Long) SessionManager.getSessionAttribute("memberId");
@@ -91,7 +110,7 @@ public class MemoService {
 
         // 소유권자인지 확인
         Long memberId = (Long) SessionManager.getSessionAttribute("memberId");
-        if(!memoEntity.getMemberEntity().getId().equals(memberId)) throw new RuntimeException("삭제 권한 없음");
+        if (!memoEntity.getMemberEntity().getId().equals(memberId)) throw new RuntimeException("삭제 권한 없음");
 
         // MemoItemDto로 변환
         MemoItemDto memoItemDto = new MemoItemDto();
@@ -107,6 +126,7 @@ public class MemoService {
 
     /**
      * 메모 삭제
+     *
      * @param memoId
      * @return true: 성공, false, 실패
      */

@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class MemoDto {
 
+    private Long id;
+
     private String title;
 
     private String content;

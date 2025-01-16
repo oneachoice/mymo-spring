@@ -24,9 +24,18 @@ public class MemoRestController {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("메모 저장 실패");
     }
 
+    @PutMapping
+    public ResponseEntity<String> change(MemoDto memoDto) {
+        if (memoService.update(memoDto)) {
+            return ResponseEntity.ok("메모 수정 완료");
+        }
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("메모 수정 실패");
+    }
+
     @GetMapping
     public ResponseEntity<MemoPageDto> read(@PageableDefault(size = 20, sort = "updatedAt", direction = Sort.Direction.DESC) Pageable pageable) {
-        return ResponseEntity.ok(memoService.getMemoItems(pageable));
+        return ResponseEntity.ok(memoService.getMemoPage(pageable));
     }
 
     @GetMapping("/{memoId}")
